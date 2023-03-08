@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            background-color: aqua;
+        }
+
+
+        td {
+            width: 50px;
+            height: 50px;
+            border: 1px solid gray;
+            cursor: pointer;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+    <script src="model.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+        let items = [{ name: 'M-16', type: 'Rifel' }, { name: 'Grenade', type: 'Bomb' }, { name: 'Knife', type: 'Hand weapon' }, { name: 'Silencer', type: 'Rifel and pistol accesory' }, { name: 'Pistol', type: 'Hand gun' }, { name: 'Ammo', type: 'Bullets' }, { name: 'Medicine', type: 'Medical care supply' }];
+        let infoDiv = document.getElementById('app');
+        let inventory=[];
+        let inventoryText=null;
+        let inventoryItems = '';
+        let itemDescription= '';
+        
+
+
+        show();
+        function show() {
+            infoDiv.innerHTML = /*html*/ `
+            <div class="container">
+                <div class="inventoryItems">
+                    <table id="itemsTable"></table></div><br/>
+                <button onclick="showInventory()">Inventory</button><br/><br/>
+
+                <div class="inventory">${inventoryText ? inventoryText : ''}
+                    <table id="inventory"><tr>${inventoryItems ? inventoryItems : ''}</tr></table><br/>
+                    <p>${itemDescription ? itemDescription : ''}</p>
+                </div>
+                
+            </div>
+        `;
+            let tableId = document.getElementById('itemsTable');
+
+            tableId.innerHTML = '';
+
+            for (let i = 0; i < 1; i++) {
+                let row = tableId.insertRow();
+                for (let j = 0; j < items.length; j++) {
+                    let cell = row.insertCell();
+                    cell.innerHTML = items[j].name;
+                    cell.addEventListener("click", addItemToInventory, false);
+                }
+            }
+
+        }
+        function addItemToInventory(aMouseEvent){
+            console.log(aMouseEvent);
+            let column = aMouseEvent.srcElement.cellIndex;
+            let row = aMouseEvent.srcElement.parentElement.sectionRowIndex;
+            inventory.push(items[column]);
+            items.splice(column, 1);
+            inventoryItems = '';
+            inventoryText='';
+            show();
+            
+
+        }
+        function showInventory(){
+            if(inventoryItems || inventoryText) {inventoryItems ='';
+                                inventoryText ='';
+        }
+            else {
+                if (inventory.length == 0) {
+                
+                inventoryText = '<p>You have nothing in the inventory.</p>';
+            }
+
+                else if (inventory.length > 0) {
+             
+                    inventoryItems = '';
+                    inventoryText = '';
+
+                    for(let j = 0; j < inventory.length; j++){
+
+                       
+                        inventoryItems += `<td onclick="showDescription(${j})">${inventory[j].name}
+                                            <button onclick="deleteItem(${j})">X</button>
+                                            </td>`;
+                    }
+                }
+            }
+
+            
+
+            show();
+
+        }
+
+        function showDescription(index){
+            itemDescription='';
+
+            itemDescription = 'It is ' + inventory[index].type + '.';
+
+            show();
+
+
+        }
+        function deleteItem(index){
+            items.push(inventory[index]);
+            inventory.splice(index, 1);
+            itemDescription='';
+
+            if(inventory.length == 0) inventoryText = '<p>You have nothing in the inventory.</p>';
+  
+            
+
+            inventoryItems = '';
+
+            for(let j = 0; j < inventory.length; j++){
+
+                       
+                    inventoryItems += `<td onclick="showDescription(${j})">${inventory[j].name}
+                    <button onclick="deleteItem(${j})">X</button>
+                    </td>`;
+}
+            
+
+            show();
+        }
+        
+    </script>
+</body>
+
+</html>
